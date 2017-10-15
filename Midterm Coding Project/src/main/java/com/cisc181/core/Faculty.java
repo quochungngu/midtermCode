@@ -25,7 +25,7 @@ public class Faculty extends Employee {
     
 	public Faculty(String FirstName, String MiddleName, String LastName,
 			Date DOB, String Address, String Phone_number, String Email,
-			String officeHours, int rank, double salary, Date hireDate) 
+			String officeHours, int rank, double salary, Date hireDate) throws PersonException
 	
 	{
 		super(FirstName, MiddleName, LastName, DOB, Address, Phone_number,

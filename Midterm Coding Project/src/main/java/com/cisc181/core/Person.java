@@ -46,10 +46,15 @@ public abstract class Person implements java.io.Serializable {
 		return DOB;
 	}
 
-	public void setDOB(Date DOB){
-		this.DOB = DOB;
-		
-		
+	public void setDOB(Date DOB) throws PersonException{
+		try {
+			this.DOB = DOB;
+			if (PrintAge() > 100)
+				throw new PersonException(this, "Person is older than 100 and is too old.");
+		}
+		catch (PersonException p) {
+			throw p;
+		}
 	}
 
 	public void setAddress(String newAddress) {
@@ -60,8 +65,29 @@ public abstract class Person implements java.io.Serializable {
 		return address;
 	}
 
-	public void setPhone(String newPhone_number) {
-		phone_number = newPhone_number;
+	public void setPhone(String newPhone_number) throws PersonException{
+		try {
+			phone_number = newPhone_number;
+
+			String regex = "^\\(?([0-9]{3})\\)?[-.\\s]?([0-9]{3})[-.\\s]?([0-9]{4})$";
+			Pattern pattern = Pattern.compile(regex);
+
+			if (pattern.matcher(newPhone_number).matches()) {
+				if (!pattern.matcher(newPhone_number).replaceFirst("($1)-$2-$3").equals(newPhone_number))
+					throw new PersonException(this, "Phone number is not formatted in the "
+							+ "following format: (###)-###-####");
+			}
+
+			else {
+				throw new PersonException(this, "Phone number is mistyped or not a North "
+						+ "American phone number with 10 digits.");
+			}
+
+		}
+		catch (PersonException p) {
+			throw p;
+		}
+		
 	
 	}
 
@@ -89,8 +115,7 @@ public abstract class Person implements java.io.Serializable {
 	 */
 
 	public Person(String FirstName, String MiddleName, String LastName,
-			Date DOB, String Address, String Phone_number, String Email)
-	{
+			Date DOB, String Address, String Phone_number, String Email) throws PersonException {
 		this.FirstName = FirstName;
 		this.MiddleName = MiddleName;
 		this.LastName = LastName;
@@ -98,7 +123,6 @@ public abstract class Person implements java.io.Serializable {
 		this.address = Address;
 		this.setPhone(Phone_number);
 		this.email_address = Email;
-		
 	}
 
 	public void PrintName() {
@@ -116,6 +140,7 @@ public abstract class Person implements java.io.Serializable {
 
 		int age = 0;
 		birthDate.setTime(this.DOB);
+		
 		if (birthDate.after(today)) {
 			throw new IllegalArgumentException("Can't be born in the future");
 		}
